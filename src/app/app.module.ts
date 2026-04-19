@@ -9,6 +9,8 @@ import { HomePage } from '../pages/home/home';
 import { BookPage } from '../pages/book/book';
 import { TocPage } from '../pages/toc/toc';
 import { SettingsPage } from '../pages/settings/settings';
+import { ReaderControlService } from '../providers/reader/reader-control.service';
+import { ReaderNativeControlsService } from '../providers/reader/reader-native-controls.service';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,8 @@ import { SettingsPage } from '../pages/settings/settings';
   providers: [
     StatusBar,
     SplashScreen,
+    ReaderControlService,
+    ReaderNativeControlsService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

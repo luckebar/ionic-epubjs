@@ -1,38 +1,41 @@
-# ionic-epubjs
+# E-ink Reader Cordova
 
-Sample project of how to use [Epub.js](https://github.com/futurepress/epub.js) in an Ionic 3 app. 
+Cordova Android ebook reader base using OnsenUI, jQuery and epub.js.
 
-## How Epub.js is integrated
+The previous Ionic 3 source is still present in `src/` as legacy reference, but the runnable Cordova app now lives in `www/`.
 
-As just natively importing Epub.js after installing it via `npm` unfortunately doesn't work, I copied over the `build` directory of the npm package of epubjs from `/node_modules/epubjs` to `/src/assets/epubjs` and included `epubjs.min.js` in `index.html`. That way the `ePub` object is globally available and can be used in Typescript after declaring it with `declare var ePub: any;`.
+## Stack
+
+- Cordova Android
+- cordova-android 14.0.1
+- OnsenUI 2.12.8
+- jQuery 3.7.1
+- epub.js 0.3.93
+
+OnsenUI, jQuery and epub.js are loaded from CDN in `www/index.html`. The included offline test book is `www/assets/books/moby-dick.epub`.
 
 ## Functionality
 
-* Open books
-  * Load and render locally available books from `/assets/books`
-  * Switch between different books
-* Reading UI
-  * Tap through pages by using "next" and "previous" buttons
-  * Swipe pages to go to next or previous page
-  * Tap the page to toggle a reading mode with no UI
-  * Display page number the reader is currently on
-  * Display total number of pages in book
-  * Display chapter title the reader is currently in
-* Table of Contents
-  * Show the table of contents of a book
-  * Tap chapter to go there
-* Settings
-  * Change font size
-  * Change background color (and with it text color)
-  * UI automatically adapts the toolbar color depending on the chosen background and text color
-  * Change font family
+- Open a local EPUB.
+- Read with epub.js 0.3 paginated rendition.
+- Navigate with previous / next buttons.
+- Navigate by tapping left / right reader zones.
+- Use Android media notification previous / next through `cordova-plugin-music-controls2`.
+- Use volume up / down in foreground.
+- Simulate future hardware commands from the settings dialog.
+- Keep an e-ink transport scaffold for future USB serial integration.
 
 ## Development
 
-1. Clone the repo
-2. Run `npm install`
-3. Run `ionic cordova prepare`
-4. Run `ionic serve` or `ionic cordova run android|ios`
+1. Run `npm install`.
+2. Run `npm run prepare:android`.
+3. Run `npm run build:android` or `npm run run:android`.
+
+The debug APK is generated at `platforms/android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## Android e-ink reader controls
+
+This fork includes an Android-first scaffold for persistent media-style page controls, foreground volume-key page controls and a future external e-ink display transport. See `docs/eink-reader-architecture.md` for the command flow, test steps and current limits.
 
 ## Information + Resources
 

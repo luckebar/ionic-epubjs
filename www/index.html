@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: blob: https://localhost ws: wss:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: blob:; connect-src 'self' data: blob: http: https: ws: wss:; font-src 'self' data:; frame-src 'self' data: blob: https://localhost; child-src 'self' data: blob: https://localhost; worker-src 'self' blob:;">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+  <title>LB-EReader</title>
+
+  <link rel="stylesheet" href="css/onsenui.min.css">
+  <link rel="stylesheet" href="css/onsen-css-components.min.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <ons-navigator id="navigator" page="home.html"></ons-navigator>
+
+  <template id="home.html">
+    <ons-page id="home-page">
+      <ons-toolbar>
+        <div class="center">LB-EReader</div>
+        <div class="right">
+          <ons-toolbar-button id="app-settings-button">Settings</ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+
+      <div class="home-content">
+        <p class="intro">Choose a book.</p>
+        <div class="home-actions">
+          <ons-button id="app-jellyfin-button" modifier="large">Jellyfin library</ons-button>
+        </div>
+        <ons-list id="book-list"></ons-list>
+      </div>
+    </ons-page>
+  </template>
+
+  <template id="reader.html">
+    <ons-page id="reader-page">
+      <ons-toolbar id="reader-toolbar">
+        <div class="left">
+          <ons-back-button>Books</ons-back-button>
+        </div>
+        <div class="center" id="reader-title">Reader</div>
+        <div class="right">
+          <ons-toolbar-button id="settings-button">Aa</ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+
+      <div id="reader-shell">
+        <div id="reader"></div>
+        <div id="tap-left" class="tap-zone" aria-label="Previous page"></div>
+        <div id="tap-right" class="tap-zone" aria-label="Next page"></div>
+      </div>
+
+      <div id="reader-footer">
+        <ons-button modifier="quiet" id="prev-button">Previous</ons-button>
+        <span id="page-indicator">Page 1</span>
+        <ons-button modifier="quiet" id="next-button">Next</ons-button>
+      </div>
+    </ons-page>
+  </template>
+
+  <template id="settings.html">
+    <ons-page id="settings-page">
+      <ons-toolbar>
+        <div class="left">
+          <ons-back-button>Books</ons-back-button>
+        </div>
+        <div class="center">Settings</div>
+      </ons-toolbar>
+
+      <div class="settings-content">
+        <section class="settings-section">
+          <h2>Library</h2>
+          <ons-list>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Books folder</span>
+                <span class="list-item__subtitle" id="books-directory-status">Default app folder</span>
+              </div>
+            </ons-list-item>
+          </ons-list>
+          <div class="settings-actions">
+            <ons-button id="choose-books-directory" modifier="large">Choose folder</ons-button>
+            <ons-button id="reset-books-directory" modifier="large quiet">Use default folder</ons-button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2>Jellyfin</h2>
+          <ons-list>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Enable Jellyfin</span>
+                <span class="list-item__subtitle">Catalog and reading progress sync</span>
+              </div>
+              <div class="right">
+                <ons-switch id="jellyfin-enabled"></ons-switch>
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center settings-field">
+                <label for="jellyfin-server-url">Server URL</label>
+                <input id="jellyfin-server-url" class="text-input" type="url" placeholder="http://192.168.1.50:8096">
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center settings-field">
+                <label for="jellyfin-username">Username</label>
+                <input id="jellyfin-username" class="text-input" type="text" autocomplete="username">
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center settings-field">
+                <label for="jellyfin-password">Password</label>
+                <input id="jellyfin-password" class="text-input" type="password" autocomplete="current-password">
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Status</span>
+                <span class="list-item__subtitle" id="jellyfin-status">Not configured</span>
+              </div>
+            </ons-list-item>
+          </ons-list>
+          <div class="settings-actions">
+            <ons-button id="jellyfin-sign-in" modifier="large">Sign in</ons-button>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2>Reading Sync</h2>
+          <ons-list>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Save local progress</span>
+                <span class="list-item__subtitle">Remember the current EPUB location on this device</span>
+              </div>
+              <div class="right">
+                <ons-switch id="local-progress-enabled" checked></ons-switch>
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Sync progress with Jellyfin</span>
+                <span class="list-item__subtitle">Share reading position across devices</span>
+              </div>
+              <div class="right">
+                <ons-switch id="jellyfin-progress-enabled"></ons-switch>
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Last sync</span>
+                <span class="list-item__subtitle" id="sync-status">Never</span>
+              </div>
+            </ons-list-item>
+          </ons-list>
+        </section>
+
+        <section class="settings-section">
+          <h2>External E-ink</h2>
+          <ons-list>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Enable external display</span>
+                <span class="list-item__subtitle">Send rendered pages to the ESP32 bridge</span>
+              </div>
+              <div class="right">
+                <ons-switch id="eink-enabled"></ons-switch>
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Send page automatically</span>
+                <span class="list-item__subtitle">Update the display after every page turn</span>
+              </div>
+              <div class="right">
+                <ons-switch id="eink-auto-send"></ons-switch>
+              </div>
+            </ons-list-item>
+            <ons-list-item>
+              <div class="center">
+                <span class="list-item__title">Connection</span>
+                <span class="list-item__subtitle" id="eink-status">Not connected</span>
+              </div>
+            </ons-list-item>
+          </ons-list>
+          <div class="settings-actions">
+            <ons-button id="eink-test-connection" modifier="large quiet">Test connection</ons-button>
+            <ons-button id="eink-send-current-page" modifier="large quiet">Send current page</ons-button>
+          </div>
+        </section>
+      </div>
+    </ons-page>
+  </template>
+
+  <template id="jellyfin-catalog.html">
+    <ons-page id="jellyfin-catalog-page">
+      <ons-toolbar>
+        <div class="left">
+          <ons-back-button>Settings</ons-back-button>
+        </div>
+        <div class="center" id="jellyfin-catalog-title">Jellyfin</div>
+        <div class="right">
+          <ons-toolbar-button id="jellyfin-catalog-refresh">Refresh</ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+
+      <div class="catalog-content">
+        <p id="jellyfin-catalog-status" class="intro">Loading catalog.</p>
+        <ons-list id="jellyfin-catalog-list"></ons-list>
+      </div>
+    </ons-page>
+  </template>
+
+  <ons-dialog id="settings-dialog">
+    <div class="dialog-content">
+      <h2>Reading</h2>
+      <ons-list>
+        <ons-list-item tappable id="font-smaller">Smaller text</ons-list-item>
+        <ons-list-item tappable id="font-larger">Larger text</ons-list-item>
+        <ons-list-item tappable id="simulate-rot-left">Simulate ROT_LEFT</ons-list-item>
+        <ons-list-item tappable id="simulate-rot-right">Simulate ROT_RIGHT</ons-list-item>
+        <ons-list-item tappable id="simulate-button">Simulate BTN_CLICK</ons-list-item>
+      </ons-list>
+      <ons-button modifier="large" id="close-settings">Close</ons-button>
+    </div>
+  </ons-dialog>
+
+  <script src="cordova.js"></script>
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/jszip.min.js"></script>
+  <script src="js/lib/epub.min.js"></script>
+  <script src="js/lib/onsenui.min.js"></script>
+  <script src="js/eink-viewport.js"></script>
+  <script src="js/external-transport.js"></script>
+  <script src="js/reader-control.js"></script>
+  <script src="js/settings-store.js"></script>
+  <script src="js/jellyfin-client.js"></script>
+  <script src="js/native-controls.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

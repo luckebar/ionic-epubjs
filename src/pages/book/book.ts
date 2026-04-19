@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, Platform, PopoverController, Events, NavParams } from 'ionic-angular';
 import { TocPage } from '../toc/toc';
 import { SettingsPage } from '../settings/settings';
+import { ReaderControlService } from '../../providers/reader/reader-control.service';
 
 declare var ePub: any;
 
@@ -19,6 +20,7 @@ export class BookPage {
   showToolbars: boolean = true;
   bgColor: any;
   toolbarColor: string = 'light';
+  private unregisterReaderCallbacks: () => void;
 
   constructor(
     public navCtrl: NavController,
@@ -26,6 +28,7 @@ export class BookPage {
     public popoverCtrl: PopoverController,
     public events: Events,
     public navParams: NavParams,
+    public readerControl: ReaderControlService,
   ) {
     let book = this.navParams.get('book');
 
@@ -49,6 +52,7 @@ export class BookPage {
 
       // subscribe to events coming from other pages
       this._subscribeToEvents();
+      this._registerReaderControls();
     });
   }
 
@@ -57,6 +61,12 @@ export class BookPage {
 
     // render book
     this.book.renderTo("book"); // TODO We should work with ready somehow here I think
+  }
+
+  ionViewWillUnload() {
+    if (this.unregisterReaderCallbacks) {
+      this.unregisterReaderCallbacks();
+    }
   }
 
   _subscribeToEvents() {
@@ -110,6 +120,7 @@ export class BookPage {
     let page = this.book.pagination.pageFromCfi(currentLocation)
     console.log('_updateCurrentPage location =', currentLocation, 'page =', page);
     this.currentPage = page;
+    this.readerControl.setCurrentLocation(page, currentLocation);
   }
 
   _updateTotalPages() {
@@ -142,7 +153,26 @@ export class BookPage {
   // Navigation
 
   prev() {
-    console.log('prev');
+    console.log('prev ui');
+    this.readerControl.previousPage('ui');
+  }
+
+  next() {
+    console.log('next ui');
+    this.readerControl.nextPage('ui');
+  }
+
+  private _registerReaderControls() {
+    this.unregisterReaderCallbacks = this.readerControl.registerPageCallbacks({
+      nextPage: () => this._nextPageFromReaderControl(),
+      previousPage: () => this._previousPageFromReaderControl(),
+      customAction: () => console.log('[BookPage] custom reader action placeholder')
+    });
+    this.readerControl.setCurrentLocation(this.currentPage, this.book.getCurrentLocationCfi ? this.book.getCurrentLocationCfi() : '');
+  }
+
+  private _previousPageFromReaderControl() {
+    console.log('[BookPage] previous page command');
     if (this.currentPage == 2) { // TODO Why this special case here?
       this.book.gotoPage(1);
     } else {
@@ -150,8 +180,8 @@ export class BookPage {
     }
   }
 
-  next() {
-    console.log('next');
+  private _nextPageFromReaderControl() {
+    console.log('[BookPage] next page command');
     this.book.nextPage();
   }
 
