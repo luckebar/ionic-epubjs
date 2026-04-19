@@ -1,8 +1,8 @@
-# E-ink Reader Cordova
+# LB-EReader
 
 Cordova Android ebook reader base using OnsenUI, jQuery and epub.js.
 
-The previous Ionic 3 source is still present in `src/` as legacy reference, but the runnable Cordova app now lives in `www/`.
+The runnable Cordova app lives in `www/`, with native Android helpers in `plugins-local/`.
 
 ## Stack
 
@@ -12,7 +12,7 @@ The previous Ionic 3 source is still present in `src/` as legacy reference, but 
 - jQuery 3.7.1
 - epub.js 0.3.93
 
-OnsenUI, jQuery and epub.js are loaded from CDN in `www/index.html`. The included offline test book is `www/assets/books/moby-dick.epub`.
+OnsenUI, jQuery and epub.js are bundled under `www/`. The included offline test book is `www/assets/books/moby-dick.epub`.
 
 ## Functionality
 

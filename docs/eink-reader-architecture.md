@@ -1,20 +1,13 @@
-# E-ink reader Android controls
+# LB-EReader Android controls
 
 ## Summary
 
-This project has been converted to a Cordova Android app with cordova-android 14, OnsenUI, jQuery and epub.js 0.3. The previous Ionic 3 source remains in `src/` as reference, but the active app now lives in `www/`.
+This project is a Cordova Android app with cordova-android 14, OnsenUI, jQuery and epub.js 0.3. The active app lives in `www/`, with native Android helpers in `plugins-local/`.
 
 ## What changed
 
 Touched files:
 
-- `src/app/app.module.ts`
-- `src/app/app.component.ts`
-- `src/pages/book/book.ts`
-- `src/providers/reader/reader-control.service.ts`
-- `src/providers/reader/reader-native-controls.service.ts`
-- `src/providers/eink/external-transport.ts`
-- `src/providers/eink/eink-viewport.ts`
 - `www/index.html`
 - `www/css/app.css`
 - `www/js/app.js`
@@ -55,7 +48,7 @@ Removed plugin:
 
 Configured notification behavior:
 
-- title: `E-ink Reader`
+- title: `LB-EReader`
 - previous button enabled
 - next button enabled
 - `dismissable: false`
@@ -206,7 +199,7 @@ The debug APK is generated at `platforms/android/app/build/outputs/apk/debug/app
 - Real bitmap/canvas export is not implemented yet.
 - Real USB serial transport is not implemented yet.
 - The media notification depends on `cordova-plugin-music-controls2` being installed by Cordova.
-- OnsenUI, jQuery and epub.js are currently loaded from CDN. For fully offline Android builds, copy those library files into `www/vendor/` and update `www/index.html`.
+- OnsenUI, jQuery and epub.js are bundled under `www/`.
 
 ## Recommended next steps
 
